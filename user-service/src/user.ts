@@ -17,6 +17,18 @@ export async function simulateUser() {
   let seekPosition = 0;
   let heartbeatInterval: NodeJS.Timeout | null = null;
 
+  // Function to send heartbeat event every 10 seconds
+  function startHeartbeat() {
+    return setInterval(() => {
+      sendEvent({
+        userId,
+        eventType: "heartbeat",
+        videoId,
+        timestamp: Date.now(),
+      });
+    }, 10000);
+  }
+
   while (Math.random() > 0.1) {
     // 10% chance of user leaving
     const eventType = getRandomEvent(watching);
@@ -31,14 +43,7 @@ export async function simulateUser() {
     if (eventType === "play") {
       watching = true;
       if (!heartbeatInterval) {
-        heartbeatInterval = setInterval(() => {
-          sendEvent({
-            userId,
-            eventType: "heartbeat",
-            videoId,
-            timestamp: Date.now(),
-          });
-        }, 10000);
+        heartbeatInterval = startHeartbeat();
       }
     }
     if (eventType === "pause" || eventType === "exit") {
