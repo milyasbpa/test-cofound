@@ -15,6 +15,7 @@ export async function simulateUser() {
   let watching = false;
   let videoId = videos[Math.floor(Math.random() * videos.length)];
   let seekPosition = 0;
+  let heartbeatInterval: NodeJS.Timeout | null = null;
 
   while (Math.random() > 0.1) {
     // 10% chance of user leaving
@@ -27,10 +28,27 @@ export async function simulateUser() {
       seekPosition,
     };
 
-    if (eventType === "play") watching = true;
-    if (eventType === "pause" || eventType === "exit") watching = false;
+    if (eventType === "play") {
+      watching = true;
+      if (!heartbeatInterval) {
+        heartbeatInterval = setInterval(() => {
+          sendEvent({
+            userId,
+            eventType: "heartbeat",
+            videoId,
+            timestamp: Date.now(),
+          });
+        }, 10000);
+      }
+    }
+    if (eventType === "pause" || eventType === "exit") {
+      watching = false;
+      if (heartbeatInterval) {
+        clearInterval(heartbeatInterval);
+        heartbeatInterval = null;
+      }
+    }
     if (eventType === "seek") seekPosition = Math.floor(Math.random() * 300); // Random seek
-    console.log(event, "ini event");
     await sendEvent(event);
     await sleep(getRandomWaitTime(eventType));
   }
