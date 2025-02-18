@@ -1,2 +1,5 @@
 user-service/node_modules
 user-service/package-lock.json
+
+streaming-service/node_modules
+streaming-service/package-lock.json
