@@ -6,3 +6,6 @@ streaming-service/package-lock.json
 
 simulation-orchestrator/node_modules
 simulation-orchestrator/package-lock.json
+
+simulation-orchestrator-ui/node_modules
+simulation-orchestrator-ui/package-lock.json
